@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -14,14 +16,17 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.ECPrivateKey;
-import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPrivateKeySpec;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.crypto.Cipher;
+import javax.crypto.EncryptedPrivateKeyInfo;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -30,16 +35,14 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import sun.security.ssl.SSLContextImpl;
 
 import static org.eclipse.paho.client.mqttv3.MqttConnectOptions.MQTT_VERSION_3_1_1;
 
 /**
  * 工具类：负责封装 MQ4IOT 客户端的初始化参数设置
  */
-public class ConnectionOptionWrapper {
+public class ConnectionOptionWrapperSSL {
     /**
      * 内部连接参数
      */
@@ -75,8 +78,8 @@ public class ConnectionOptionWrapper {
      * @param clientId MQ4IOT clientId，由业务系统分配
      * @param tokenData 客户端使用的 Token 参数，仅在 Token 鉴权模式下需要设置
      */
-    public ConnectionOptionWrapper(String instanceId, String accessKey, String clientId,
-                                   Map<String, String> tokenData) {
+    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String clientId,
+                                      Map<String, String> tokenData) {
         this.instanceId = instanceId;
         this.accessKey = accessKey;
         this.clientId = clientId;
@@ -108,8 +111,8 @@ public class ConnectionOptionWrapper {
      * @param clientId MQ4IOT clientId，由业务系统分配
      * @param secretKey 账号 secretKey，从账号系统控制台获取
      */
-    public ConnectionOptionWrapper(String instanceId, String accessKey, String secretKey,
-                                   String clientId) throws NoSuchAlgorithmException, InvalidKeyException {
+    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String secretKey,
+                                      String clientId) throws NoSuchAlgorithmException, InvalidKeyException {
         this.instanceId = instanceId;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
@@ -124,9 +127,9 @@ public class ConnectionOptionWrapper {
         mqttConnectOptions.setConnectionTimeout(5000);
     }
 
-    public ConnectionOptionWrapper(String instanceId, String accessKey, String secretKey,
-                                   String clientId, String rootCAPath, String deviceCrtPath, String deviceKeyPath,
-                                   String passwd) throws Exception {
+    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String secretKey,
+                                      String clientId, String rootCAPath, String deviceCrtPath, String deviceKeyPath,
+                                      String passwd) throws Exception {
         this.instanceId = instanceId;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
@@ -173,12 +176,13 @@ public class ConnectionOptionWrapper {
         ks.load(null, password.toCharArray());
         ks.setCertificateEntry("certificate3", x509Certs[0]);
 
-        PrivateKey privateKey = getPrivateKey(new File(keyPath));
+        Key privateKey = getPrivateKey(new File(keyPath));
         /*
          * 注意：下面这行代码中非常重要的一点是：
          * setKeyEntry这个函数的第二个参数 password，他不是指私钥的加密密码，只是KeyStore对这个私钥进行管理设置的密码
          *
-         * setKeyEntry中最后一个参数，chain的顺序是证书链中越靠近当前privateKey节点的证书，越靠近数字下标0的位置。
+         * setKeyEntry中最后一个参数，chain的顺序是证书链中越靠近当前privateKey节点的证书，越靠近数字下标0的位置。即chain[0]是privateKey对应的证书，
+         * chain[1]是签发chain[0]的证书，以此类推，有chain[i+1]签发chain[i]的关系。
          */
         ks.setKeyEntry("private-key", privateKey, password.toCharArray(), x509Certs);
         /*
@@ -198,7 +202,7 @@ public class ConnectionOptionWrapper {
         return context;
     }
 
-    public PrivateKey getPrivateKey(File file) {
+    public Key getPrivateKey(File file) throws InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException {
         if (file == null) {
             return null;
         }
@@ -208,34 +212,20 @@ public class ConnectionOptionWrapper {
             pemReader = new PemReader(new FileReader(file));
             PemObject pemObject = pemReader.readPemObject();
             byte[] pemContent = pemObject.getContent();
-            //支持从PKCS#1或PKCS#8 格式的私钥文件中提取私钥
-            if (pemObject.getType().endsWith("RSA PRIVATE KEY")) {
-                /*
-                 * 取得私钥  for PKCS#1
-                 * openssl genrsa 默认生成的私钥就是PKCS1的编码
-                 */
-                RSAPrivateKey asn1PrivKey = RSAPrivateKey.getInstance(pemContent);
-                RSAPrivateKeySpec rsaPrivKeySpec = new RSAPrivateKeySpec(asn1PrivKey.getModulus(), asn1PrivKey.getPrivateExponent());
-                KeyFactory keyFactory= KeyFactory.getInstance("rsa");
-                privKey= keyFactory.generatePrivate(rsaPrivKeySpec);
-            } else if (pemObject.getType().endsWith("PRIVATE KEY")) {
-                /*
-                 * 通过openssl pkcs8 -topk8转换为pkcs8，例如（-nocrypt不做额外加密操作）：
-                 * openssl pkcs8 -topk8 -in pri.key -out pri8.key -nocrypt
-                 *
-                 * 取得私钥 for PKCS#8
-                 */
-                PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(pemContent);
-                KeyFactory kf = KeyFactory.getInstance("rsa");
-                privKey = kf.generatePrivate(privKeySpec);
+            PKCS8EncodedKeySpec encodedKeySpec = generateKeySpec(null, pemContent);
+            try {
+                return KeyFactory.getInstance("RSA").generatePrivate(encodedKeySpec);
+            } catch (InvalidKeySpecException ignore) {
+                try {
+                    return KeyFactory.getInstance("DSA").generatePrivate(encodedKeySpec);
+                } catch (InvalidKeySpecException ignore2) {
+                    try {
+                        return KeyFactory.getInstance("EC").generatePrivate(encodedKeySpec);
+                    } catch (InvalidKeySpecException e) {
+                        throw new InvalidKeySpecException("Neither RSA, DSA nor EC worked", e);
+                    }
+                }
             }
-
-//            else if (pemObject.getType().endsWith("EC PARAMETERS")) {
-//                KeyFactory kf = KeyFactory.getInstance("EC");
-//                // decode private key
-//                PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(pemContent);
-//                privKey = kf.generatePrivate(privSpec);
-//            }
         } catch (FileNotFoundException e) {
             System.out.println("read private key fail,the reason is the file not exist");
             e.printStackTrace();
@@ -252,6 +242,25 @@ public class ConnectionOptionWrapper {
             }
         }
         return privKey;
+    }
+
+    protected static PKCS8EncodedKeySpec generateKeySpec(char[] password, byte[] key)
+            throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException,
+            InvalidKeyException, InvalidAlgorithmParameterException {
+
+        if (password == null) {
+            return new PKCS8EncodedKeySpec(key);
+        }
+
+        EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = new EncryptedPrivateKeyInfo(key);
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(encryptedPrivateKeyInfo.getAlgName());
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
+        SecretKey pbeKey = keyFactory.generateSecret(pbeKeySpec);
+
+        Cipher cipher = Cipher.getInstance(encryptedPrivateKeyInfo.getAlgName());
+        cipher.init(Cipher.DECRYPT_MODE, pbeKey, encryptedPrivateKeyInfo.getAlgParameters());
+
+        return encryptedPrivateKeyInfo.getKeySpec(cipher);
     }
 
     public MqttConnectOptions getMqttConnectOptions() {
