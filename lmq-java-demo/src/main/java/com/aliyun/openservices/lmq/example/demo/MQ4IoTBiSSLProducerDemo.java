@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -19,7 +18,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  *
  * 完整 demo 工程，参考https://github.com/AliwareMQ/lmq-demo
  */
-public class MQ4IoTProducerDemo {
+public class MQ4IoTBiSSLProducerDemo {
     public static void main(String[] args) throws Exception {
         /**
          * MQ4IOT 实例 ID，购买后控制台获取
