@@ -55,6 +55,12 @@
             <artifactId>aliyun-java-sdk-core</artifactId>
             <version>4.5.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
     </dependencies>
 
 </project>

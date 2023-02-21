@@ -42,7 +42,7 @@ import static org.eclipse.paho.client.mqttv3.MqttConnectOptions.MQTT_VERSION_3_1
 /**
  * 工具类：负责封装 MQ4IOT 客户端的初始化参数设置
  */
-public class ConnectionOptionWrapperSSL {
+public class ConnectionOptionWrapper {
     /**
      * 内部连接参数
      */
@@ -78,7 +78,7 @@ public class ConnectionOptionWrapperSSL {
      * @param clientId MQ4IOT clientId，由业务系统分配
      * @param tokenData 客户端使用的 Token 参数，仅在 Token 鉴权模式下需要设置
      */
-    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String clientId,
+    public ConnectionOptionWrapper(String instanceId, String accessKey, String clientId,
                                       Map<String, String> tokenData) {
         this.instanceId = instanceId;
         this.accessKey = accessKey;
@@ -111,7 +111,7 @@ public class ConnectionOptionWrapperSSL {
      * @param clientId MQ4IOT clientId，由业务系统分配
      * @param secretKey 账号 secretKey，从账号系统控制台获取
      */
-    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String secretKey,
+    public ConnectionOptionWrapper(String instanceId, String accessKey, String secretKey,
                                       String clientId) throws NoSuchAlgorithmException, InvalidKeyException {
         this.instanceId = instanceId;
         this.accessKey = accessKey;
@@ -127,7 +127,7 @@ public class ConnectionOptionWrapperSSL {
         mqttConnectOptions.setConnectionTimeout(5000);
     }
 
-    public ConnectionOptionWrapperSSL(String instanceId, String accessKey, String secretKey,
+    public ConnectionOptionWrapper(String instanceId, String accessKey, String secretKey,
                                       String clientId, String rootCAPath, String deviceCrtPath, String deviceKeyPath,
                                       String passwd) throws Exception {
         this.instanceId = instanceId;
