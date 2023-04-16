@@ -1,11 +1,4 @@
 ﻿#pragma once
-//
-//  cbase64.h
-//  cbase64
-//
-//  Created by guofu on 2017/5/25.
-//  Copyright © 2017年 guofu. All rights reserved.
-//
 
 #ifndef cbase64_h
 #define cbase64_h
@@ -23,4 +16,4 @@ extern "C" {
 }
 #endif
 
-#endif /* base64_h */
+#endif
