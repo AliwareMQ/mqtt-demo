@@ -3,8 +3,16 @@
 var mqtt = require('mqtt')
 var CryptoJS = require("crypto-js");
 
-var accessKey='xxxx'
-var secretKey='xxxx'
+//账号 accesskey，从账号系统控制台获取
+//阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。
+//强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。
+//本示例以把AccessKey ID和AccessKey Secret保存在环境变量为例说明。运行本代码示例之前，请先配置环境变量MQTT_AK_ENV和MQTT_SK_ENV
+//例如：export MQTT_AK_ENV=access_key_id
+//     export MQTT_SK_ENV=access_key_secret
+//需要将access_key_id替换为已准备好的AccessKey ID，access_key_secret替换为AccessKey Secret
+var accessKey = process.env.MQTT_AK_ENV;
+//账号的的 SecretKey，在阿里云控制台查看
+var secretKey = process.env.MQTT_SK_ENV;
 
 var clientId = 'xxxx'
 var instanceId='xxxx'

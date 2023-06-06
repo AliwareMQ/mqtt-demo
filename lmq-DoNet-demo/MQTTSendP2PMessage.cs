@@ -18,9 +18,16 @@ namespace MQTTDemo
             //此处填写购买得到的 MQTT 接入点域名
             String brokerUrl = "XXX.mqtt.aliyuncs.com";
             //此处填写阿里云帐号 AccessKey
-            String accessKey = "XXXXXX";
+            //账号 accesskey，从账号系统控制台获取
+            //阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。
+            //强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。
+            //本示例以把AccessKey ID和AccessKey Secret保存在环境变量为例说明。运行本代码示例之前，请先配置环境变量MQTT_AK_ENV和MQTT_SK_ENV
+            //例如：export MQTT_AK_ENV=<access_key_id>
+            //     export MQTT_SK_ENV=<access_key_secret>
+            //需要将<access_key_id>替换为已准备好的AccessKey ID，<access_key_secret>替换为AccessKey Secret。
+            String accessKey = Environment.GetEnvironmentVariable("MQTT_AK_ENV");
             //此处填写阿里云帐号 SecretKey
-            String secretKey = "XXXXXX";
+            String secretKey = Environment.GetEnvironmentVariable("MQTT_SK_ENV");
             //此处填写在 MQ 控制台创建的 Topic，作为 MQTT 的一级 Topic
             String parentTopic = "XXXXX";
             //此处填写客户端 ClientId，需要保证全局唯一，其中前缀部分即 GroupId 需要先在 MQ 控制台创建

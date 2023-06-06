@@ -13,8 +13,16 @@
         port = 80;//WebSocket 协议服务端口，如果是走 HTTPS，设置443端口
         topic = 'XXXX';//需要操作的 Topic,第一级父级 topic 需要在控制台申请
         useTLS = false;//是否走加密 HTTPS，如果走 HTTPS，设置为 true
-        accessKey = 'XXXXX';//账号的 AccessKey，在阿里云控制台查看
-        secretKey = 'XXXXX';//账号的的 SecretKey，在阿里云控制台查看
+        //账号 accesskey，从账号系统控制台获取
+        //阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。
+        //强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。
+        //本示例以把AccessKey ID和AccessKey Secret保存在环境变量为例说明。运行本代码示例之前，请先配置环境变量MQTT_AK_ENV和MQTT_SK_ENV
+        //例如：export MQTT_AK_ENV=access_key_id
+        //     export MQTT_SK_ENV=access_key_secret
+        //需要将access_key_id替换为已准备好的AccessKey ID，access_key_secret替换为AccessKey Secret
+        accessKey = process.env.MQTT_AK_ENV;
+        //账号的的 SecretKey，在阿里云控制台查看
+        secretKey = process.env.MQTT_SK_ENV;
         cleansession = true;
         groupId = 'GID_XXXX';//MQTT GroupID,创建实例后从 MQTT 控制台创建
         clientId = groupId + '@@@00001';//GroupId@@@DeviceId，由控制台创建的 Group ID 和自己指定的 Device ID 组合构成
