@@ -90,14 +90,14 @@ int main(int argc, char **argv) {
       * 账号 accesskey，从账号系统控制台获取
       * 阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。
       * 强烈建议不要把AccessKey ID和AccessKey Secret保存到工程代码里，否则可能导致AccessKey泄露，威胁您账号下所有资源的安全。
-      * 本示例以把AccessKey ID和AccessKey Secret保存在环境变量为例说明。运行本代码示例之前，请先配置环境变量MQTT_AK_ENV和MQTT_SK_ENV
+      * 可以把AccessKey ID和AccessKey Secret保存在环境变量。运行本代码示例之前，请先配置环境变量MQTT_AK_ENV和MQTT_SK_ENV
       * 例如：export MQTT_AK_ENV=<access_key_id>
       *      export MQTT_SK_ENV=<access_key_secret>
       * 需要将<access_key_id>替换为已准备好的AccessKey ID，<access_key_secret>替换为AccessKey Secret。
     */
-    char *accessKey = getenv("MQTT_AK_ENV");
+    char *accessKey = "XXXX";
     //账号 SecretKey，从账号控制台获取
-    char *secretKey = getenv("MQTT_SK_ENV");
+    char *secretKey = "XXXX";
     //使用的协议端口，默认 tcp 协议使用1883，如果需要使用 SSL 加密，端口设置成8883，具体协议和端口参考文档链接https://help.aliyun.com/document_detail/44867.html?spm=a2c4g.11186623.6.547.38d81cf7XRnP0C
     int port = 1883;
     int qos = 0;
