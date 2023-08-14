@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/Users/pandongyuan/project/mqtt-demo/lmq-c-demo/build",
-  "command": "/usr/bin/clang  -I/Users/pandongyuan/project/mqtt-demo/lmq-c-demo/src/c/. -I/Users/pandongyuan/project/mqtt-demo/lmq-c-demo/src/c/src -I/Users/pandongyuan/project/mqtt-demo/lmq-c-demo/build -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -std=gnu99 -o CMakeFiles/mqttDemo.dir/mqttDemo.c.o -c /Users/pandongyuan/project/mqtt-demo/lmq-c-demo/src/c/mqttDemo.c",
-  "file": "/Users/pandongyuan/project/mqtt-demo/lmq-c-demo/src/c/mqttDemo.c"
-}
-]
