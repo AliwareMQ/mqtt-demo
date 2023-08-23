@@ -63,10 +63,10 @@ public class MQ4IoTBiSSLProducerDemo {
         final int qosLevel = 0;
 
         /**
-         * 双向认证 需要根证书、设备私钥、设备证书
+         * 双向认证 需要根证书、设备私钥、设备证书。ca.crt 为CA证书，client_chain.crt为设备证书链（通常由设备证书+ca证书拼接），client.key 设备证书的key，passwd为设备证书key的密码，如果没有则填""。
          */
         final String caPath = "xxx/ca.crt";
-        final String deviceCrtPath = "xxx/client.crt";
+        final String deviceCrtPath = "xxx/client_chain.crt";
         final String deviceKyPath = "xxx/client.key";
         final String passwd = "xxx";
 
@@ -77,7 +77,7 @@ public class MQ4IoTBiSSLProducerDemo {
          * 客户端使用的协议和端口必须匹配，具体参考文档 https://help.aliyun.com/document_detail/44866.html?spm=a2c4g.11186623.6.552.25302386RcuYFB
          * 如果是 双向SSL 加密则设置ssl://endpoint:8884
          */
-        final MqttClient mqttClient = new MqttClient("ssl://" + endPoint + ":8884", clientId, memoryPersistence);
+        final MqttClient mqttClient = new MqttClient("ssl://" + endPoint + ":8883", clientId, memoryPersistence);
 
         /**
          * 客户端设置好发送超时时间，防止无限阻塞

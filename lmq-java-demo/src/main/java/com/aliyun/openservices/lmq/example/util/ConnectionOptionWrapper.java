@@ -138,6 +138,8 @@ public class ConnectionOptionWrapper {
         mqttConnectOptions.setCleanSession(false);
         mqttConnectOptions.setKeepAliveInterval(90);
         mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setUserName("Signature|" + accessKey + "|" + instanceId);
+        mqttConnectOptions.setPassword(Tools.macSignature(clientId, secretKey).toCharArray());
         mqttConnectOptions.setMqttVersion(MQTT_VERSION_3_1_1);
         mqttConnectOptions.setConnectionTimeout(5000);
 
