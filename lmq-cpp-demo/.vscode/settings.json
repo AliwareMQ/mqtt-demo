@@ -1,0 +1,28 @@
+{
+  "files.associations": {
+    "*.vue": "vue",
+    "stdlib.h": "c",
+    "mqttasync.h": "c",
+    "mqttexportdeclarations.h": "c",
+    "mqttproperties.h": "c",
+    "mqttsubscribeopts.h": "c",
+    "mqttclientpersistence.h": "c",
+    "hmac.h": "c",
+    "bio.h": "c",
+    "macros.h": "c",
+    "e_os2.h": "c",
+    "crypto.h": "c",
+    "core.h": "c",
+    "bioerr.h": "c",
+    "evp.h": "c",
+    "core_dispatch.h": "c",
+    "params.h": "c",
+    "evperr.h": "c",
+    "bn.h": "c",
+    "types.h": "c",
+    "bnerr.h": "c",
+    "objects.h": "c",
+    "objectserr.h": "c",
+    "asn1.h": "c"
+  }
+}
