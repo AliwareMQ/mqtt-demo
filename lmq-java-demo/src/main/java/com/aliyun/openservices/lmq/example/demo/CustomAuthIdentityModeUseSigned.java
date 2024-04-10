@@ -24,24 +24,24 @@ public class CustomAuthIdentityModeUseSigned {
         /**
          * MQ4IOT 实例 ID，购买后控制台获取
          */
-        String instanceId = "mqtt-cn-g4t3og44202";
+        String instanceId = "XXXXX";
         /**
          * 接入点地址，购买 MQ4IOT 实例，且配置完成后即可获取，接入点地址必须填写分配的域名，不得使用 IP 地址直接连接，否则可能会导致客户端异常。
          */
-        String endPoint = "mqtt-cn-g4t3og44202.mqtt.aliyuncs.com";
+        String endPoint = "XXXXX.mqtt.aliyuncs.com";
         /**
          * 自定义用户名 username，即调用添加账号身份认证信息时填写的username
          */
-        String username = "zsmweiwei001";
+        String username = "XXXXX";
         /**
          * 秘钥 secret，即调用添加账号身份认证信息时填写的secret
          */
-        String secret = "zsmweiwei001";
+        String secret = "XXXXX";
         /**
          * MQ4IOT clientId，由业务系统分配，需要保证每个 tcp 连接都不一样，保证全局唯一，如果不同的客户端对象（tcp 连接）使用了相同的 clientId 会导致连接异常断开。
          * 在自定义鉴权中 client格式为 xxxxxx，即clientId可以任意填写，在Group降级时，一些控制台功能比如设备查询、设备轨迹查询暂且也被降级不能使用
          */
-        String clientId = "2222";
+        String clientId = "XXXXX";
         /**
          * MQ4IOT 消息的一级 topic，需要在控制台申请才能使用。
          * 如果使用了没有申请或者没有被授权的 topic 会导致鉴权失败，服务端会断开客户端连接。
