@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 public class CustomAuthIdentityModeUseOrigin {
     public static void main(String[] args) throws Exception {
         /**
-         * MQ4IOT 实例 ID，购买后控制台获取
+         * MQTT 实例 ID，购买后控制台获取
          */
         String instanceId = "XXXXX";
         /**
-         * 接入点地址，购买 MQ4IOT 实例，且配置完成后即可获取，接入点地址必须填写分配的域名，不得使用 IP 地址直接连接，否则可能会导致客户端异常。
+         * 接入点地址，购买 MQTT 实例，且配置完成后即可获取，接入点地址必须填写分配的域名，不得使用 IP 地址直接连接，否则可能会导致客户端异常。
          */
         String endPoint = "XXXXX.mqtt.aliyuncs.com";
         /**
@@ -38,21 +38,22 @@ public class CustomAuthIdentityModeUseOrigin {
          */
         String secret = "XXXXX";
         /**
-         * MQ4IOT clientId，由业务系统分配，需要保证每个 tcp 连接都不一样，保证全局唯一，如果不同的客户端对象（tcp 连接）使用了相同的 clientId 会导致连接异常断开。
+         * MQTT clientId，由业务系统分配，需要保证每个 tcp 连接都不一样，保证全局唯一，如果不同的客户端对象（tcp 连接）使用了相同的 clientId 会导致连接异常断开。
          * 在自定义鉴权中 client格式为 xxxxxx，即clientId可以任意填写，在Group降级时，一些控制台功能比如设备查询、设备轨迹查询暂且也被降级不能使用
+         * 推荐使用<GroupID>@@@<DeviceID>的格式
          */
-        String clientId = "XXXXX";
+        String clientId = "GID_XXXXX@@@XXXXX";
         /**
-         * MQ4IOT 消息的一级 topic，需要在控制台申请才能使用。
+         * MQTT 消息的一级 topic，需要在控制台申请才能使用。
          * 如果使用了没有申请或者没有被授权的 topic 会导致鉴权失败，服务端会断开客户端连接。
          * 在自定义鉴权中 如果该topic是第一次使用的话 需要调用接口添加topic资源授权信息才能正常使用 具体参考https://help.aliyun.com/zh/apsaramq-for-mqtt/developer-reference/api-onsmqtt-2020-04-20-addcustomauthpermission?spm=a2c4g.11186623.0.0.5dcc74c5U9nMNL
          */
         final String parentTopic = "XXXXX";
         /**
-         * MQ4IOT支持子级 topic，用来做自定义的过滤，此处为示意，可以填写任何字符串，具体参考https://help.aliyun.com/document_detail/42420.html?spm=a2c4g.11186623.6.544.1ea529cfAO5zV3
+         * MQTT支持子级 topic，用来做自定义的过滤，此处为示意，可以填写任何字符串，具体参考https://help.aliyun.com/document_detail/42420.html?spm=a2c4g.11186623.6.544.1ea529cfAO5zV3
          * 需要注意的是，完整的 topic 参考 https://help.aliyun.com/document_detail/63620.html?spm=a2c4g.11186623.6.554.21a37f05ynxokW。
          */
-        final String mq4IotTopic = parentTopic + "/" + "testMq4Iot";
+        final String mqttTopic = parentTopic + "/" + "testMqtt";
         /**
          * QoS参数代表传输质量，可选0，1，2，根据实际需求合理设置，具体参考 https://help.aliyun.com/document_detail/42420.html?spm=a2c4g.11186623.6.544.1ea529cfAO5zV3
          */
@@ -105,19 +106,19 @@ public class CustomAuthIdentityModeUseOrigin {
         });
         mqttClient.connect(connectionOptionWrapper.getMqttConnectOptions());
         for (int i = 0; i < 10; i++) {
-            MqttMessage message = new MqttMessage("hello mq4Iot pub sub msg".getBytes());
+            MqttMessage message = new MqttMessage("hello mqtt pub sub msg".getBytes());
             message.setQos(qosLevel);
             /**
              *  发送普通消息时，topic 必须和接收方订阅的 topic 一致，或者符合通配符匹配规则
              */
-            mqttClient.publish(mq4IotTopic, message);
+            mqttClient.publish(mqttTopic, message);
             /**
-             * MQ4IoT支持点对点消息，即如果发送方明确知道该消息只需要给特定的一个设备接收，且知道对端的 clientId，则可以直接发送点对点消息。
+             * MQTT支持点对点消息，即如果发送方明确知道该消息只需要给特定的一个设备接收，且知道对端的 clientId，则可以直接发送点对点消息。
              * 点对点消息不需要经过订阅关系匹配，可以简化订阅方的逻辑。点对点消息的 topic 格式规范是  {{parentTopic}}/p2p/{{targetClientId}}
              */
             String receiverId = "xxx";
             final String p2pSendTopic = parentTopic + "/p2p/" + receiverId;
-            message = new MqttMessage("hello mq4Iot p2p msg".getBytes());
+            message = new MqttMessage("hello mqtt p2p msg".getBytes());
             message.setQos(qosLevel);
             mqttClient.publish(p2pSendTopic, message);
         }
