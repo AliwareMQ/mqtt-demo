@@ -147,6 +147,35 @@ public class ConnectionOptionWrapper {
         mqttConnectOptions.setSocketFactory(ctx.getSocketFactory());
     }
 
+    /**
+     * 自定义 鉴权模式下构造方法
+     *
+     * @param instanceId MQ4IOT 实例 ID，购买后控制台获取
+     * @param userName 账号 userName，用户的自定义用户名
+     * @param clientId MQ4IOT clientId，由业务系统分配
+     * @param secret 账号 secret，用户的自定义秘钥
+     */
+    public ConnectionOptionWrapper(String instanceId, String userName, String secret,
+                                   String clientId, SignMode signMode) throws NoSuchAlgorithmException, InvalidKeyException {
+        this.instanceId = instanceId;
+        this.clientId = clientId;
+        mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setUserName(userName);
+        if (SignMode.SIGNED.equals(signMode)) {
+            mqttConnectOptions.setPassword(Tools.macSignature(clientId, secret).toCharArray());
+        } else if (SignMode.ORIGIN.equals(signMode)) {
+            mqttConnectOptions.setPassword(secret.toCharArray());
+        } else {
+            System.out.println("signMode not exist");
+            throw new RuntimeException();
+        }
+        mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setKeepAliveInterval(90);
+        mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setMqttVersion(MQTT_VERSION_3_1_1);
+        mqttConnectOptions.setConnectionTimeout(5000);
+    }
+
     public SSLContext getSSLContext(String caPath, String crtPath, String keyPath, String password) throws Exception {
         /*
          * CA证书是用来认证服务端的，这里的CA就是一个公认的认证证书
