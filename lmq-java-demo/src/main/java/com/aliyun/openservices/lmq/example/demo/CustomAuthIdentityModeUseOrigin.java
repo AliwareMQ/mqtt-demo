@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 本代码提供自定义鉴权的签名（ORIGIN）模式下 MQ4IOT 客户端发送消息到 MQ4IOT 客户端的示例，其中初始化参数请根据实际情况修改
+ * 本代码提供自定义鉴权的签名（ORIGIN）模式下 MQTT 客户端发送消息到 MQTT 客户端的示例，其中初始化参数请根据实际情况修改
  * 自定义鉴权即使用用户自己提供的 UserName 和 Secret 对每个客户端计算出一个独立的签名供客户端识别使用。
  * 对于实际业务场景使用过程中，考虑到秘钥 Secret 的隐私性，可以将签名过程放在受信任的环境完成。
  * 完整 demo 工程，参考https://github.com/AliwareMQ/lmq-demo
