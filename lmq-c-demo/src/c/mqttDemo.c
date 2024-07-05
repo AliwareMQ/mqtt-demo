@@ -148,6 +148,11 @@ int main(int argc, char **argv) {
     conn_opts.onSuccess = onConnect;
     conn_opts.onFailure = onConnectFailure;
     conn_opts.context = client;
+    conn_opts.ssl->CApath = "e.g. /etc/ssl/certs";    // CA证书路径
+    conn_opts.ssl->trustStore = "e.g. /etc/ssl/certs/ca-certificates.crt";  // CA证书文件
+    conn_opts.ssl->keyStore = "e.g. /etc/ssl/certs/client.crt";  // 客户端证书文件
+    conn_opts.ssl->privateKey = "e.g. /etc/ssl/certs/client.key";  // 客户端私钥文件
+    conn_opts.ssl->privateKeyPassword = "e.g. 123456";  // 客户端私钥密码
     //如果需要使用 SSL 加密
     if (useSSL) {
         MQTTAsync_SSLOptions ssl =MQTTAsync_SSLOptions_initializer;
