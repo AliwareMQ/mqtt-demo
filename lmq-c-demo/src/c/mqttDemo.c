@@ -1,5 +1,6 @@
 #include "MQTTAsync.h"
 
+#include <stdbool.h>
 #include <signal.h>
 #include <memory.h>
 #include <stdlib.h>
@@ -17,6 +18,7 @@
 
 volatile int connected = 0;
 bool useSSL = false;
+bool usemSSL = true;
 char *topic;
 char *userName;
 char *passWord;
@@ -85,15 +87,15 @@ int main(int argc, char **argv) {
     MQTTAsync_disconnectOptions disc_opts = MQTTAsync_disconnectOptions_initializer;
     MQTTAsync client;
     //实例 ID，购买后从控制台获取
-    char * instanceId = "XXXX";
+    char * instanceId = "xxx";
     //测试收发消息的 Topic
-    topic = "XXXX";
+    topic = "xxx";
     //接入点域名，从控制台获取
-    char *host = "XXXX.mqtt.aliyuncs.com";
+    char *host = "xxx.mqtt.aliyuncs.com";
     //客户端使用的 GroupID，从控制台申请
-    char *groupId = "GID_XXXX";
+    char *groupId = "xxx";
     //客户端 ClientID 的后缀，由业务自行指定，只需要保证全局唯一即可
-    char *deviceId = "XXXX";
+    char *deviceId = "xxx";
     /**
       * 账号 accesskey，从账号系统控制台获取
       * 阿里云账号AccessKey拥有所有API的访问权限，建议您使用RAM用户进行API访问或日常运维。
@@ -103,11 +105,11 @@ int main(int argc, char **argv) {
       *      export MQTT_SK_ENV=<access_key_secret>
       * 需要将<access_key_id>替换为已准备好的AccessKey ID，<access_key_secret>替换为AccessKey Secret。
     */
-    char *accessKey = "XXXX";
+    char *accessKey = "xxx";
     //账号 SecretKey，从账号控制台获取
-    char *secretKey = "XXXX";
+    char *secretKey = "xxx";
     //使用的协议端口，默认 tcp 协议使用1883，如果需要使用 SSL 加密，端口设置成8883，具体协议和端口参考文档链接https://help.aliyun.com/document_detail/44867.html?spm=a2c4g.11186623.6.547.38d81cf7XRnP0C
-    int port = 1883;
+    int port = xxx;
     int qos = 0;
     int cleanSession = 1;
     int rc = 0;
@@ -131,7 +133,7 @@ int main(int argc, char **argv) {
     create_opts.sendWhileDisconnected = 0;
     create_opts.maxBufferedMessages = 10;
     char url[100];
-    if (useSSL) {
+    if (useSSL || usemSSL) {
         sprintf(url, "ssl://%s:%d", host, port);
     } else {
         sprintf(url, "tcp://%s:%d", host, port);
@@ -151,6 +153,13 @@ int main(int argc, char **argv) {
     //如果需要使用 SSL 加密
     if (useSSL) {
         MQTTAsync_SSLOptions ssl =MQTTAsync_SSLOptions_initializer;
+        conn_opts.ssl = &ssl;
+    } else if (usemSSL) {
+        MQTTAsync_SSLOptions ssl =MQTTAsync_SSLOptions_initializer;
+        // 分别填写 CA证书、客户端证书、客户端私钥
+        ssl.trustStore = "path/to/ca.crt";
+        ssl.keyStore = "path/to/client.crt";
+        ssl.privateKey = "path/to/client.key";
         conn_opts.ssl = &ssl;
     } else {
         conn_opts.ssl = NULL;
