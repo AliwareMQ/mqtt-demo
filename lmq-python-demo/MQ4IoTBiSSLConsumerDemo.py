@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 #coding=utf-8
+import hmac
+import base64
+from hashlib import sha1
 from paho.mqtt.client import MQTT_LOG_INFO, MQTT_LOG_NOTICE, MQTT_LOG_WARNING, MQTT_LOG_ERR, MQTT_LOG_DEBUG
 from paho.mqtt import client as mqtt
 # 实例 ID，购买后从产品控制台获取
@@ -46,7 +49,8 @@ def on_message(client, userdata, msg):
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print('Unexpected disconnection %s' % rc)
-client = mqtt.Client(client_id, protocol=mqtt.MQTTv311, clean_session=True)
+#client = mqtt.Client(client_id, protocol=mqtt.MQTTv311, clean_session=True)
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id)
 client.on_log = on_log
 client.on_connect = on_connect
 client.on_message = on_message
@@ -56,6 +60,9 @@ ca_certs = "XXXX/CA.crt"
 certfile = "XXXX/client_chain.crt"
 keyfile = "XXXX/client.key"
 client.tls_set(ca_certs=ca_certs, certfile=certfile, keyfile=keyfile)
+userName ='Signature'+'|'+accessKey+'|'+instanceId;
+password = base64.b64encode(hmac.new(secretKey.encode(), client_id.encode(), sha1).digest()).decode()
+client.username_pw_set(userName, password)
 
 client.connect(brokerUrl, 8883, 60)
 client.loop_forever()

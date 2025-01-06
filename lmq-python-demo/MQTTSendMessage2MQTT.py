@@ -62,7 +62,8 @@ def on_message(client, userdata, msg):
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print('Unexpected disconnection %s' % rc)
-client = mqtt.Client(client_id, protocol=mqtt.MQTTv311, clean_session=True)
+#client = mqtt.Client(client_id, protocol=mqtt.MQTTv311, clean_session=True)
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id)
 client.on_log = on_log
 client.on_connect = on_connect
 client.on_message = on_message
