@@ -19,12 +19,39 @@ class ViewController: UIViewController, MQTTSessionDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // 普通无认证
         // 设置下面的参数后，修改代码中的topic名称（代码中为test，需要在控制台提前创建）
         session.transport = MQTTCFSocketTransport()
         session.transport.host = "xxxxxx.mqtt.aliyuncs.com"
         session.transport.port = 1883
+
+//         // 单向认证
+//         session.transport = MQTTCFSocketTransport()
+//         session.transport.host = "xxxxxx.mqtt.aliyuncs.com"
+//         session.transport.port = 8883
+//         session.transport.tls = true
+
+        // 双向认证
+//         let transport = MQTTSSLSecurityPolicyTransport()
+//         // 设置下面的参数后，修改代码中的topic名称（代码中为test，需要在控制台提前创建）
+//         transport.host = "mqtt-cn-xxxxxx.mqtt.aliyuncs.com"
+//         transport.port = 8883
+//         transport.tls = true;
+//         transport.certificates = xxx // 客户端证书链
+//
+//         let securityPolicy = MQTTSSLSecurityPolicy();
+//         securityPolicy.allowInvalidCertificates = true;
+//         securityPolicy.validatesDomainName = false;
+//         securityPolicy.validatesCertificateChain = false;
+//         securityPolicy.pinnedCertificates = xxxx // CA证书
+//         transport.securityPolicy = securityPolicy;
+//
+//         session.transport = transport
+
+
         // 设备ID，必须以GroupId@@@clientId的形式
-        session.clientId = "GID_xxx@@@xxxx"
+        session.clientId = "GID_test@@@test"
         // 以签名鉴权的方式举例，生成签名鉴权的用户名密码
         session.userName = "Signature|xxxxx|instanceId"
         session.password = "xxxx"
