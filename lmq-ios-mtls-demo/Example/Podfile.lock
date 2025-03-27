@@ -1,0 +1,29 @@
+PODS:
+  - CocoaMQTT/Core (2.1.8):
+    - MqttCocoaAsyncSocket (~> 1.0.8)
+  - CocoaMQTT/WebSockets (2.1.8):
+    - CocoaMQTT/Core
+    - Starscream (= 4.0.4)
+  - MqttCocoaAsyncSocket (1.0.8)
+  - Starscream (4.0.4)
+
+DEPENDENCIES:
+  - CocoaMQTT/WebSockets (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - MqttCocoaAsyncSocket
+    - Starscream
+
+EXTERNAL SOURCES:
+  CocoaMQTT:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CocoaMQTT: 0ffa7ecb3e48a8c755f4b296b5cd081b932d7806
+  MqttCocoaAsyncSocket: 77d3b74f76228dd5a05d1f9526eab101d415b30c
+  Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
+
+PODFILE CHECKSUM: 4a23702d5274fa0c626c9b9bff4da31ffa8c32ae
+
+COCOAPODS: 1.16.2
